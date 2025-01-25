@@ -10,7 +10,7 @@ host = 'b6pvycldyedsyrjrdnom-mysql.services.clever-cloud.com'
 user = 'uuksqqmvg93rwh6f'
 password = 'I052xaxHKOAm9DOxq4Ik'
 database = 'b6pvycldyedsyrjrdnom'
-port = 3306  
+port = 3306
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -19,15 +19,15 @@ geolocator = Nominatim(user_agent="cab_booking_app")
 # Function to get a database connection
 def get_db_connection():
     connection = mysql.connector.connect(
-        host=host,  
-        database=database,  
-        user=user,  
-        password=password  
+        host=host,
+        database=database,
+        user=user,
+        password=password
     )
     return connection
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])  
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -59,7 +59,7 @@ def register():
         password = request.form['password']
         phone_number = request.form['phone_number']
         address = request.form['address']
-        hashed_password = generate_password_hash(password)
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 
         try:
             connection = get_db_connection()
@@ -113,7 +113,7 @@ def view_cabs():
             return f"An error occurred: {e}"
     else:
         return redirect('/login')
-    
+
 @app.route('/dashboard/history')
 def view_history():
     if 'username' in session:
@@ -136,7 +136,7 @@ def view_bookings():
         try:
             connection = get_db_connection()
             cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM booking")  
+            cursor.execute("SELECT * FROM booking")
             bookings = cursor.fetchall()
             cursor.close()
             connection.close()
@@ -148,20 +148,17 @@ def view_bookings():
 
 @app.route('/dashboard/book')
 def book_cab():
-    # Renders the booking page with map
     return render_template('index-1.html')
 
-# Route to save the distance and locations
 @app.route('/save_distance', methods=['POST'])
 def save_distance():
     data = request.json
-    print("Received data:", data)  # Debugging output
+    print("Received data:", data)
 
     session['distance'] = data.get('distance')
     session['pickup_location'] = data.get('pickupLocation')
     session['dropoff_location'] = data.get('dropoffLocation')
 
-    # Check if all required fields are set
     if not session['pickup_location'] or not session['dropoff_location'] or not session['distance']:
         return jsonify({"error": "Missing location or distance data."}), 400
 
@@ -181,7 +178,6 @@ def save_booking_details():
     passengers = data.get('passengers')
     amount = data.get('amount')
 
-    # Ensure that the required session variables are set
     print("Session Values:")
     print("Pickup Location:", session.get('pickup_location'))
     print("Dropoff Location:", session.get('dropoff_location'))
@@ -190,14 +186,11 @@ def save_booking_details():
     if 'pickup_location' not in session or 'dropoff_location' not in session or 'distance' not in session:
         return jsonify({"error": "Session data missing"}), 400
 
-    # Save to MySQL
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Format the pickup_time to a proper datetime object
-    pickup_time_obj = datetime.strptime(pickup_time, '%Y-%m-%dT%H:%M')  # Adjust format as needed
+    pickup_time_obj = datetime.strptime(pickup_time, '%Y-%m-%dT%H:%M')
 
-    # Insert booking details into the database
     try:
         cursor.execute('''
             INSERT INTO bookings (pickup_location, dropoff_location, distance, pickup_time, passengers, amount)
@@ -206,7 +199,7 @@ def save_booking_details():
 
         conn.commit()
     except Error as e:
-        print("Database error:", e)  # Print the error for debugging
+        print("Database error:", e)
         return jsonify({"error": f"Database error: {str(e)}"}), 500
     finally:
         cursor.close()
@@ -231,3 +224,4 @@ def logout():
 if __name__ == '__main__':
     app.secret_key = 'supersecretkey'
     app.run(debug=True)
+
