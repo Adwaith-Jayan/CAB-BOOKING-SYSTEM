@@ -1,5 +1,4 @@
 from datetime import datetime
-import requests
 from flask import Flask, render_template, request, redirect, session, jsonify
 import mysql.connector
 from mysql.connector import Error
