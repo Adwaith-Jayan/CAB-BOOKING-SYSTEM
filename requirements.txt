@@ -1,2 +1,5 @@
 Flask
 Gunicorn
+mysql-connector-python==8.1.0
+Werkzeug==2.2.3
+geopy==2.3.0
