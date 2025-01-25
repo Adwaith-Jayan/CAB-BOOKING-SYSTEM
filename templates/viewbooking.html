@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Bookings</title>
+    <link rel="stylesheet" href="/project1/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+    <div class="page">
+        <h1>Your Bookings</h1>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Pickup Location</th>
+                <th>Pickup Date</th>
+                <th>Pickup Time</th>
+                <th>Drop Location</th>
+                <th>No. of People</th>
+                <th>Status</th>
+            </tr>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.bookingID }}</td>
+                <td>{{ booking.pickup_location }}</td>
+                <td>{{ booking.pickup_date }}</td>
+                <td>{{ booking.pickup_time }}</td>
+                <td>{{ booking.drop_location }}</td>
+                <td>{{ booking.no_of_people }}</td>
+                <td>{{ booking.booking_status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/dashboard">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

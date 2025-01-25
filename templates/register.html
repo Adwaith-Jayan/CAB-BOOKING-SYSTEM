@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/project1/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+    <div class="page">
+        <form method="post" action="/register.html">
+            <h3>New here!!!</h3>
+            <h1>Register</h1>
+            
+            <div class="inputbox">
+                <input type="text" name="username" id="username" placeholder="Username" required>
+            </div>
+            <div class="inputbox">
+                <input type="number" name="phone_number" id="phone_number" placeholder="Phonenumber" required>
+            </div>
+            <div class="inputbox">
+                <input type="text" name="address" id="address" placeholder="Address" required>
+            </div>
+            <div class="inputbox">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+            </div>
+            <div class="submit-button">
+                <button type="submit" class="btn">Submit</button>
+
+            </div>
+        </form>
+
+    </div>
+    
+</body>
+</html>

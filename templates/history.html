@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Cabs</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Cab ID</th>
+            <th>Licence Number</th>
+            <th>Car Name</th>
+            <th>Model</th>
+            <th>Capacity</th>
+            <th>Status</th>
+        </tr>
+        {% for cab in cabs %}
+        <tr>
+            <td>{{ cab.cabID }}</td>
+            <td>{{ cab.licence_number }}</td>
+            <td>{{ cab.car_name }}</td>
+            <td>{{ cab.model }}</td>
+            <td>{{ cab.capacity }}</td>
+            <td>{{ cab.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
