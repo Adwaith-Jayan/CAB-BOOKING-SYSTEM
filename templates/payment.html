@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body { font-family:Georgia, 'Times New Roman', Times, serif;
+            background-image: url("/html,css/project1/static/images/pexels-steve-29101882.jpg");
+            background-position: center;
+         }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; text-align: center; }
+        button { padding: 10px 20px; background-color: #df3b4f; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #b1056f; }
+        .container h2{
+            color: #eecc0c;
+            font-size:xx-large;
+        }
+        .container p{
+            font-size: x-large;
+            color: antiquewhite;
+        }
+        .container button{
+            font-size: x-large;
+            border-radius: 20px;
+            padding: 20px 30px 20px 40px;
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment</h2>
+        <p>Amount: ₹{{ amount }}</p>
+        <button id="pay">Pay</button>
+    </div>
+
+    <script>
+        document.getElementById('pay').addEventListener('click', function() {
+            window.location.href = '/booking_success';
+        });
+    </script>
+</body>
+</html>
