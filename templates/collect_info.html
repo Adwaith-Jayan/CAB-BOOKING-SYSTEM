@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collect Booking Information</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif;
+            color: aliceblue;
+            background-image: url("/static/images/pexels-steve-29101882.jpg");
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 12px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        button { 
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            flex: 2;
+        }
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            flex: 1;
+        }
+        button:hover { 
+            opacity: 0.9;
+        }
+        .container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Details</h2>
+        <form id="booking-form">
+            <div class="form-group">
+                <label for="pickup-location">Pickup Location</label>
+                <input type="text" id="pickup-location" value="{{ pickup }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="drop-location">Drop Location</label>
+                <input type="text" id="drop-location" value="{{ dropoff }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="distance">Distance</label>
+                <input type="text" id="distance" value="{{ distance }} km" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="pickup-date">Pickup Date</label>
+                <input type="date" id="pickup-date" required>
+                <div class="error-message" id="date-error">Please select a pickup date</div>
+            </div>
+
+            <div class="form-group">
+                <label for="pickup-time">Pickup Time</label>
+                <input type="time" id="pickup-time" required>
+                <div class="error-message" id="time-error">Please select a pickup time</div>
+            </div>
+
+            <div class="form-group">
+                <label for="no-of-people">Number of Passengers</label>
+                <input type="number" id="no-of-people" min="1" max="8" required>
+                <div class="error-message" id="people-error">Please enter number of passengers (1-8)</div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="back-btn" onclick="history.back()">Back</button>
+                <button type="submit" class="submit-btn">Continue to Payment</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Set minimum date to current date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('pickup-date').min = today;
+
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Form validation
+            let isValid = true;
+            
+            // Validate pickup date
+            const pickupDate = document.getElementById('pickup-date').value;
+            if (!pickupDate) {
+                document.getElementById('date-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('date-error').style.display = 'none';
+            }
+
+            // Validate pickup time
+            const pickupTime = document.getElementById('pickup-time').value;
+            if (!pickupTime) {
+                document.getElementById('time-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('time-error').style.display = 'none';
+            }
+
+            // Validate number of people
+            const noOfPeople = document.getElementById('no-of-people').value;
+            if (noOfPeople < 1 || noOfPeople > 8) {
+                document.getElementById('people-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('people-error').style.display = 'none';
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Calculate amount
+            const distance = parseFloat(document.getElementById('distance').value);
+            const rate_per_km = 10;
+            const base_fare = 50;
+            const amount = distance * rate_per_km + base_fare;
+
+            // Save booking details
+            fetch('/save_booking_details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    pickup_location: document.getElementById('pickup-location').value,
+                    pickup_time: pickupTime,
+                    pickup_date: pickupDate,
+                    drop_location: document.getElementById('drop-location').value,
+                    no_of_people: noOfPeople,
+                    amount: amount
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Booking details saved:', data);
+                window.location.href = `/payment?amount=${amount}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error processing your booking. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

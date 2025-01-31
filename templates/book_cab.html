@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Cab</title>
+    <link rel="stylesheet" href="/project1/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bookpage">
+    <div class="page">
+        <h1>Book a Cab</h1>
+        <form id="routeForm">
+            <div class="input-container">
+                <input type="text" id="pickup_location" name="pickup_location" placeholder="Enter pickup location">
+            </div>
+            <div class="input-container">
+                <input type="text" id="dropoff_location" name="dropoff_location" placeholder="Enter drop-off location">
+            </div>
+            <button type="button" class="btn" onclick="calculateRoute()">Calculate Route</button>
+        </form>
+
+        <div id="routeResult" class="info"></div>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        function calculateRoute() {
+            var pickupLocation = $('#pickup_location').val();
+            var dropoffLocation = $('#dropoff_location').val();
+
+            $.ajax({
+                url: '/calculate_route',
+                type: 'POST',
+                data: {
+                    pickup_location: pickupLocation,
+                    dropoff_location: dropoffLocation
+                },
+                success: function(response) {
+                    if (response.error) {
+                        $('#routeResult').html('<p>' + response.error + '</p>');
+                    } else {
+                        $('#routeResult').html('<p>Distance: ' + response.distance + ' meters</p><p>Duration: ' + response.duration + ' seconds</p>');
+                        // You can use response.geometry to display the route on a map if you wish
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#routeResult').html('<p>An error occurred: ' + xhr.responseText + '</p>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
